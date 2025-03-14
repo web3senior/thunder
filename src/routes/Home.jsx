@@ -541,7 +541,7 @@ function Home() {
 
 It auto-populated my handle & Dracos token id seamlessly into a PNG that's optimized for $LYX Universal Profiles & X/Twitter 🆙
 
-Create yours now → `)}&url=https://t.co/e0KwH16hWV &hashtags=LUKSO,NFT,WEB3`
+Create yours now → `)}&url=https://t.co/e0KwH16hWV`
               )
             }
           >
