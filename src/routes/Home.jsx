@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router'
 
 function Home() {
   const [totalSupply, setTotalSupply] = useState(0)
+  const [profile, setProfile] = useState()
   const [collection, setCollection] = useState()
   const [token, setToken] = useState()
 
@@ -286,27 +287,61 @@ function Home() {
       toast.dismiss(t)
     })
   }
-
-  const addToCanvas = (path, tokenId) => {
+  function roundedImage(ctx, x, y, width, height, radius) {
+    ctx.beginPath()
+    ctx.moveTo(x + radius, y)
+    ctx.lineTo(x + width - radius, y)
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius)
+    ctx.lineTo(x + width, y + height - radius)
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height)
+    ctx.lineTo(x + radius, y + height)
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius)
+    ctx.lineTo(x, y + radius)
+    ctx.quadraticCurveTo(x, y, x + radius, y)
+    ctx.closePath()
+  }
+  const addToCanvas = async (path, tokenId) => {
     const t = toast.loading(`Loading image`)
     // add the image to canvas
     const can = canvasRef.current
     const ctx = can.getContext('2d')
 
+    // Reset canvas
+    ctx.clearRect(0, 0, can.width, can.height)
+
+    await addBanner()
+
     const img = new Image()
     img.onload = function () {
-      ctx.drawImage(img, 466, 100, 300, 303)
       toast.dismiss(t)
+
+      ctx.save()
+      roundedImage(ctx, 464, 100, 303, 303, 10)
+      ctx.strokeStyle = '#000'
+      ctx.stroke()
+      ctx.clip()
+      ctx.drawImage(img, 464, 100, 303, 303)
+      ctx.restore()
+
+      addName()
+
+      addTokenId(tokenId)
     }
     img.crossOrigin = `anonymous`
     img.src = path
+  }
 
-    // Add token id
-    ctx.fillStyle = 'orange'
+  const addTokenId = async (tokenId) => {
+    const can = canvasRef.current
+    const ctx = can.getContext('2d')
+        ctx.fillStyle = 'orange'
     ctx.font = 'bold 16px Arial'
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.fillText(`#${_.toNumber(tokenId)}`, 792, 82, 100)
+    // Add token id
+    ctx.fillText(`${_.toNumber(tokenId)}`, 790, 90, 200)
+    ctx.shadowColor = 'gold'
+    ctx.shadowOffsetX = 2
+    ctx.shadowOffsetY = 2
+    ctx.shadowBlur = 4
   }
 
   const chooseLocalFile = (e) => {
@@ -334,9 +369,21 @@ function Home() {
     coverRef.current.classList.add(`animate__fadeOut`)
   }
 
-  useEffect(() => {
-    console.clear()
+  const addName = async () => {
+    handleSearchProfile(auth.accounts[0]).then((profile) => {
+      const can = canvasRef.current
+      const ctx = can.getContext('2d')
+      ctx.fillStyle = 'orange'
+      ctx.font = 'bold 16px Arial'
+      ctx.fillText(profile.data.search_profiles[0].fullName.toUpperCase(), 468, 88, 300)
+      ctx.shadowColor = 'orange'
+      ctx.shadowOffsetX = 2
+      ctx.shadowOffsetY = 2
+      ctx.shadowBlur = 8
+    })
+  }
 
+  const addBanner = async () => {
     // add the image to canvas
     const can = canvasRef.current
     const ctx = can.getContext('2d')
@@ -347,6 +394,42 @@ function Home() {
     }
     img.crossOrigin = `anonymous`
     img.src = Frame
+  }
+  const handleSearchProfile = async (addr) => {
+    var myHeaders = new Headers()
+    myHeaders.append('Content-Type', `application/json`)
+    myHeaders.append('Accept', `application/json`)
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: JSON.stringify({
+        query: `query MyQuery {
+  search_profiles(
+    args: {search: "${addr}"}
+    limit: 1
+  ) {
+    fullName
+    id
+    profileImages {
+      src
+    }
+  }
+}`,
+      }),
+    }
+    const response = await fetch(`${import.meta.env.VITE_PUBLIC_API_ENDPOINT}`, requestOptions)
+    if (!response.ok) {
+      throw new Response('Failed to ', { status: 500 })
+    }
+    const data = await response.json()
+    setProfile(data)
+    return data
+  }
+
+  useEffect(() => {
+    console.clear()
+    addBanner()
   }, [])
 
   return (
@@ -384,7 +467,16 @@ function Home() {
         </aside>
 
         <main className={`${styles.main} d-f-c flex-column w-100`}>
-          {/* <button  onClick={() => addToCanvas(`https://api.universalprofile.cloud/image/bafybeifkvtmwqzjfpqjkd5jetjh7u7b6ixs36fwjvydne3s6sceduwn3g4?method=keccak256(bytes)&data=0xb6641e9cead9ce820a9fb1c3fa71fdfd4a45db431e1190b90fac71414dadb263&width=260&dpr=1.25`,`0x0000000000000000000000000000000000000000000000000000000000000001`)} >add</button> */}
+          {/* <button
+            onClick={() =>
+              addToCanvas(
+                `https://api.universalprofile.cloud/image/bafybeifkvtmwqzjfpqjkd5jetjh7u7b6ixs36fwjvydne3s6sceduwn3g4?method=keccak256(bytes)&data=0xb6641e9cead9ce820a9fb1c3fa71fdfd4a45db431e1190b90fac71414dadb263&width=260&dpr=1.25`,
+                `0x0000000000000000000000000000000000000000000000000000000000000001`
+              )
+            }
+          >
+            add
+          </button> */}
           <header className={`${styles.header} d-flex align-items-center justify-content-between w-100`}>
             <figure className={`d-f-c grid--gap-1`}>
               <img alt={`${import.meta.env.VITE_NAME} Logo`} src={Logo} />
@@ -405,7 +497,7 @@ function Home() {
 
           <div className={`${styles.info} d-flex w-100 mt-40 grid--gap-1`}>
             <div className={`card`} data-shadow={`none`}>
-              <div className={`card__body`} style={{ padding: `1rem` }}>
+              <div className={`card__body`}>
                 <figure>
                   <img alt={`PNG`} src={IconPng} style={{ width: `32px` }} />
                 </figure>
@@ -413,7 +505,7 @@ function Home() {
             </div>
 
             <div className={`card`} data-shadow={`none`}>
-              <div className={`card__body d-f-c grid--gap-025`} style={{ padding: `1rem` }}>
+              <div className={`card__body d-f-c grid--gap-025`}>
                 <span className={`badge badge-dark`}>1500px</span>
                 <span className={`badge`} style={{ border: `none` }}>
                   500px
@@ -500,11 +592,15 @@ const ShowPFP = ({ account }) => {
       console.log(profile)
       setProfile(profile)
 
-      const can = document.querySelector(`canvas`)
-      const ctx = can.getContext('2d')
-      ctx.fillStyle = 'orange'
-      ctx.font = 'bold 16px Arial'
-      ctx.fillText(profile.data.search_profiles[0].fullName, 485, 88, 300)
+      // const can = document.querySelector(`canvas`)
+      // const ctx = can.getContext('2d')
+      // ctx.fillStyle = 'orange'
+      // ctx.font = 'bold 16px Arial'
+      // ctx.fillText(profile.data.search_profiles[0].fullName.toUpperCase(), 468, 88, 300)
+      // ctx.shadowColor = 'orange'
+      // ctx.shadowOffsetX = 2
+      // ctx.shadowOffsetY = 2
+      // ctx.shadowBlur = 8
     })
   }, [])
 
