@@ -12,7 +12,6 @@ import styles from './Home.module.scss'
 import { useNavigate } from 'react-router'
 
 function Home() {
-
   const [totalSupply, setTotalSupply] = useState(0)
   const [collection, setCollection] = useState()
   const [token, setToken] = useState()
@@ -296,7 +295,7 @@ function Home() {
 
     const img = new Image()
     img.onload = function () {
-      ctx.drawImage(img, 319, 59, 203, 173)
+      ctx.drawImage(img, 466, 100, 300, 303)
       toast.dismiss(t)
     }
     img.crossOrigin = `anonymous`
@@ -307,7 +306,7 @@ function Home() {
     ctx.font = 'bold 16px Arial'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.fillText(`#${_.toNumber(tokenId)}`, 552, 50, 100)
+    ctx.fillText(`#${_.toNumber(tokenId)}`, 792, 82, 100)
   }
 
   const chooseLocalFile = (e) => {
@@ -335,7 +334,6 @@ function Home() {
     coverRef.current.classList.add(`animate__fadeOut`)
   }
 
-
   useEffect(() => {
     console.clear()
 
@@ -345,7 +343,7 @@ function Home() {
 
     const img = new Image()
     img.onload = function () {
-      ctx.drawImage(img, 0, 0, 1024, 287)
+      ctx.drawImage(img, 0, 0, 1500, 500)
     }
     img.crossOrigin = `anonymous`
     img.src = Frame
@@ -386,6 +384,7 @@ function Home() {
         </aside>
 
         <main className={`${styles.main} d-f-c flex-column w-100`}>
+          {/* <button  onClick={() => addToCanvas(`https://api.universalprofile.cloud/image/bafybeifkvtmwqzjfpqjkd5jetjh7u7b6ixs36fwjvydne3s6sceduwn3g4?method=keccak256(bytes)&data=0xb6641e9cead9ce820a9fb1c3fa71fdfd4a45db431e1190b90fac71414dadb263&width=260&dpr=1.25`,`0x0000000000000000000000000000000000000000000000000000000000000001`)} >add</button> */}
           <header className={`${styles.header} d-flex align-items-center justify-content-between w-100`}>
             <figure className={`d-f-c grid--gap-1`}>
               <img alt={`${import.meta.env.VITE_NAME} Logo`} src={Logo} />
@@ -396,7 +395,7 @@ function Home() {
             </figure>
 
             {auth.walletConnected ? (
-              <ShowPFP account={auth.accounts[0]}/>
+              <ShowPFP account={auth.accounts[0]} />
             ) : (
               <figure className={`d-f-c flex-column`}>
                 <img src={`${DefaultPFP}`} className={`rounded ms-depth-8`} style={{ height: `48px` }} alt={`PFP`} />
@@ -415,14 +414,16 @@ function Home() {
 
             <div className={`card`} data-shadow={`none`}>
               <div className={`card__body d-f-c grid--gap-025`} style={{ padding: `1rem` }}>
-                <span className={`badge badge-dark`}>1024px</span>
-                <span className={`badge`} style={{border:`none`}}>287px</span>
+                <span className={`badge badge-dark`}>1500px</span>
+                <span className={`badge`} style={{ border: `none` }}>
+                  500px
+                </span>
               </div>
             </div>
           </div>
 
           <div className={`d-flex w-100 grid--gap-1`}>
-            <canvas ref={canvasRef} id={`canvas`} width={1024} height={287} className={`ms-depth-16`}></canvas>
+            <canvas ref={canvasRef} id={`canvas`} width={1500} height={500} className={`ms-depth-16`}></canvas>
 
             <figure>
               <img src={Traits} className={`${styles.hero}`} style={{ width: `100%` }} />
@@ -459,7 +460,7 @@ Create yours now → `)}&url=https://t.co/e0KwH16hWV &hashtags=LUKSO,NFT,WEB3`
   )
 }
 
-const ShowPFP = ({account}) => {
+const ShowPFP = ({ account }) => {
   const [profile, setProfile] = useState()
 
   const handleSearchProfile = async (addr) => {
@@ -503,26 +504,15 @@ const ShowPFP = ({account}) => {
       const ctx = can.getContext('2d')
       ctx.fillStyle = 'orange'
       ctx.font = 'bold 16px Arial'
-      ctx.fillText(profile.data.search_profiles[0].fullName, 322, 50, 300)
+      ctx.fillText(profile.data.search_profiles[0].fullName, 485, 88, 300)
     })
   }, [])
 
   return (
     <figure className={`d-f-c flex-column`}>
-    {!profile && <img
-      src={DefaultPFP}
-      className={`rounded ms-depth-8`}
-      style={{ height: `48px` }}
-      alt={``}
-    />}
-
-{profile && <img
-      src={profile.data.search_profiles[0].profileImages[0].src}
-      className={`rounded ms-depth-8`}
-      style={{ height: `48px` }}
-      alt={``}
-    />}
-  </figure>
+      {!profile && <img src={DefaultPFP} className={`rounded ms-depth-8`} style={{ height: `48px` }} alt={``} />}
+      {profile && <img src={profile.data.search_profiles[0].profileImages[0].src} className={`rounded ms-depth-8`} style={{ height: `48px` }} alt={``} />}
+    </figure>
   )
 }
 
