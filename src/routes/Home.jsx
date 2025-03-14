@@ -326,6 +326,7 @@ function Home() {
       addName()
 
       addTokenId(tokenId)
+      addTokenId(tokenId)
     }
     img.crossOrigin = `anonymous`
     img.src = path
@@ -338,10 +339,10 @@ function Home() {
     ctx.font = 'bold 16px Arial'
     // Add token id
     ctx.fillText(`${_.toNumber(tokenId)}`, 790, 90, 200)
-    ctx.shadowColor = 'gold'
+    ctx.shadowColor = 'orange'
     ctx.shadowOffsetX = 2
     ctx.shadowOffsetY = 2
-    ctx.shadowBlur = 4
+    ctx.shadowBlur = 8
   }
 
   const chooseLocalFile = (e) => {
