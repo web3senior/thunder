@@ -338,7 +338,7 @@ function Home() {
         ctx.fillStyle = 'orange'
     ctx.font = 'bold 16px Arial'
     // Add token id
-    ctx.fillText(`${_.toNumber(tokenId)}`, 790, 90, 200)
+    ctx.fillText(`#${_.toNumber(tokenId)}`, 790, 90, 200)
     ctx.shadowColor = 'orange'
     ctx.shadowOffsetX = 2
     ctx.shadowOffsetY = 2
@@ -356,7 +356,7 @@ function Home() {
   }
 
   const showAside = () => {
-    const t = toast.loading(`Reading collections`)
+    const t = toast.loading(`Reading NFTs`,{icon: `🐲`})
     setCollection('')
     setToken('')
 
