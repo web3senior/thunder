@@ -537,7 +537,7 @@ function Home() {
             className={`${styles['share']}`}
             onClick={() =>
               window.open(
-                `https://x.com/share?text=${encodeURIComponent(`Just upgraded my @DracosKodo PFP with a custom 1 of 1 banner using the Thunder Mini-App on @lukso ! ⚡🐲
+                `https://x.com/share?text=${encodeURIComponent(`Just upgraded my @DracosKodo PFP with a custom 1 of 1 banner using the Thunder Mini-App on @lukso_io ! ⚡🐲
 
 It auto-populated my handle & Dracos token id seamlessly into a PNG that's optimized for $LYX Universal Profiles & X/Twitter 🆙
 
